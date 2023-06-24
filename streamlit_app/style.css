@@ -1,0 +1,9 @@
+div[data-testid="stExpander"] div[role="button"] p {
+    font-size: 1.5rem;
+}
+
+
+.main > div {
+    padding-left: 10rem;
+    padding-right: 10rem;
+}
