@@ -155,8 +155,8 @@ def recommend_to_existing_user(df_resto, df_user, user_id, model_ncf, model_wv, 
 @st.cache_data
 def load_data(path):
             folder = os.path.dirname(os.path.dirname(os.getcwd()))
-            df_resto = pd.read_csv(folder + '/data/restaurants.csv')
-            df_users = pd.read_csv(folder + '/data/users.csv')
+            df_resto = pd.read_csv(folder + 'data/restaurants.csv')
+            df_users = pd.read_csv(folder + 'data/users.csv')
            
        
             df_resto = preprocess_df_resto(df_resto)
