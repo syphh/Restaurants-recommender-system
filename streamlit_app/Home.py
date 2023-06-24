@@ -7,7 +7,7 @@ from utils import *
 
 st.set_page_config(page_title='Restaurants Recommendation System', page_icon='🍔', layout='wide', initial_sidebar_state='auto')
 
-local_css("style.css")
+local_css("static/style.css")
 
 
 #""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
