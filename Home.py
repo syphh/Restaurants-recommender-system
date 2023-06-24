@@ -7,7 +7,7 @@ from utils import *
 
 st.set_page_config(page_title='Restaurants Recommendation System', page_icon='🍔', layout='wide', initial_sidebar_state='auto')
 
-local_css("style.css")
+local_css(".\static\style.css")
 
 
 #""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -34,7 +34,7 @@ selected = option_menu(
     )
 
 if selected == 'Home':
-    st.session_state.count = 0
+    
     right_column, left_column = st.columns([3,1.2])
     original_title = '<p style="font-family:Impact; color:rgb(238, 78, 78); font-size: 150px; margin-left:20px; margin-top:80px;">RESTAURANT </p>'
     title = '<p style="font-family:Fantasy; font-size: 100px; margin-left: 20px; ">RECOMMENDER</p>'

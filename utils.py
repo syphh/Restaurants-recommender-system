@@ -8,11 +8,6 @@ from gensim.models import Word2Vec
 import folium
 #""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
-
 
 def popularity_score(df_resto, m=50):  # m is the number of reviews starting from which the restaurant mean rating becomes more reliable that the global mean rating
     avg_rating = df_resto['avg_rating'].mean()  # mean rating of all restaurants
