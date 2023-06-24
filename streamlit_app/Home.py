@@ -7,8 +7,10 @@ from utils import *
 
 st.set_page_config(page_title='Restaurants Recommendation System', page_icon='🍔', layout='wide', initial_sidebar_state='auto')
 
-local_css("static/style.css")
-
+try:
+     local_css("static/style.css")
+except:
+     pass
 
 #""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if "df_resto" and "df_users"  not in st.session_state:
