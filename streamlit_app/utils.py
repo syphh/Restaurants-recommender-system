@@ -6,6 +6,7 @@ import tensorflow as tf
 from collections import defaultdict, Counter
 from gensim.models import Word2Vec
 import folium
+import os
 #""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 def local_css(file_name):
