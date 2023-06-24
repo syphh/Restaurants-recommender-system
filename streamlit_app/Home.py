@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit as st
 from streamlit_folium import st_folium,folium_static
 import folium
 from streamlit_option_menu import option_menu
