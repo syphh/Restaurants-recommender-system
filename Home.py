@@ -9,12 +9,12 @@ print(os.getcwd())
 
 st.set_page_config(page_title='Restaurants Recommendation System', page_icon='🍔', layout='wide', initial_sidebar_state='auto')
 
-local_css(".\static\style.css")
+#local_css(".\static\style.css")
 
 
 #""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if "df_resto" and "df_users"  not in st.session_state:
-     st.session_state.df_resto, st.session_state.df_users,  = load_data('./data/')
+     st.session_state.df_resto, st.session_state.df_users,  = load_data('../data/')
 
 if "ncfmodel" not in st.session_state:
     st.session_state.ncfmodel = load_ncfmodel()
@@ -23,7 +23,7 @@ if "word2vecmodel" not in st.session_state:
     st.session_state.word2vecmodel = load_word2vecmodel()
 
 if "all_categories" not in st.session_state:
-    all_categories = pd.read_csv('./data/unique_category_updated.csv')
+    all_categories = pd.read_csv('../data/unique_category_updated.csv')
     st.session_state.all_categories = all_categories['category']
      
 
