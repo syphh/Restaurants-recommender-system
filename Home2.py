@@ -1,20 +1,19 @@
 import streamlit as st
+import streamlit as st
 from streamlit_folium import st_folium,folium_static
 import folium
 from streamlit_option_menu import option_menu
 from utils import *
-import os
 
-print(os.getcwd())
 
 st.set_page_config(page_title='Restaurants Recommendation System', page_icon='🍔', layout='wide', initial_sidebar_state='auto')
 
-local_css(".\static\style.css")
+local_css("style.css")
 
 
 #""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if "df_resto" and "df_users"  not in st.session_state:
-     st.session_state.df_resto, st.session_state.df_users,  = load_data('./data/')
+     st.session_state.df_resto, st.session_state.df_users = load_data('..\\googlemap\\')
 
 if "ncfmodel" not in st.session_state:
     st.session_state.ncfmodel = load_ncfmodel()
@@ -23,7 +22,7 @@ if "word2vecmodel" not in st.session_state:
     st.session_state.word2vecmodel = load_word2vecmodel()
 
 if "all_categories" not in st.session_state:
-    all_categories = pd.read_csv('./data/unique_category_updated.csv')
+    all_categories = pd.read_csv('C:\\Users\\Amy\\Desktop\\pfe\\googlemap\\unique_category_updated.csv')
     st.session_state.all_categories = all_categories['category']
      
 
@@ -48,7 +47,6 @@ if selected == 'Home':
 
 
 if selected == 'Explorer les tendances':
-    
     st.header('Dans cette section vous pouvez explorer les tendances des restaurants en ce moment')
     #st.selectbox('Sort by',options=['Best rated','Most popular','Price range','Closest'])
    
@@ -87,7 +85,7 @@ if selected == 'Explorer les tendances':
  
 
 if selected == 'Tester utilisateurs existants':
-    st.session_state.count = 0
+  
     header = st.container()
     dataset = st.container()
     features = st.container()
@@ -100,7 +98,16 @@ if selected == 'Tester utilisateurs existants':
        
         
         
-      
+        @st.cache_data 
+        def load_list():
+            user_id = []
+            with open("..\list_user_id.txt", "r") as f:
+                for line in f:
+                    user_id.append(int(line.strip()))
+                    
+            return user_id
+        
+        user_id= load_list()
         user_selected= st.selectbox('Choisir un utilisateur',options= st.session_state.df_users['user_id'].head(100).values)
         
         st.write('You selected user:',user_selected)
@@ -137,7 +144,7 @@ if selected == 'Tester utilisateurs existants':
 
 
 if selected == 'Nouvel utilisateur':
-    st.session_state.count = 0
+
     
     header = st.container()
     dataset = st.container()
@@ -162,6 +169,9 @@ if selected == 'Nouvel utilisateur':
 
         if 'selected_price' not in st.session_state:
             st.session_state.selected_price = 1
+        if 'location' not in st.session_state:
+                    st.session_state.location = 1
+
         st.write('**Test a new user:**')
         print('top restart??')
         
@@ -200,14 +210,37 @@ if selected == 'Nouvel utilisateur':
        
             if submit:
                 if selected_latitude== Latitude and selected_longitude == Longitude:
-                        st.warning("Selected position has default values!")
+                        #ing("Selected position has default values!")
                         print('warning same loc as default')
                 else:
-                        st.success(f"Position selectionnée: {selected_latitude}, {selected_longitude}")
-             
+                        selected_latitude = round(selected_latitude,6)
+                        selected_longitude = round(selected_longitude,6)
+                        #st.success(f"Position selectionnée: {selected_latitude}, {selected_longitude}")
+
+
                 st.session_state.session_lat = round(selected_latitude,6)
                 st.session_state.session_long = round(selected_longitude,6)
-              
+            
+                location=1
+                geolocator = Nominatim(user_agent="geoapiExercises")
+                Latitude= (str(selected_latitude)+ '.')[:-1]
+                Longitude = (str(selected_longitude)+ '.')[:-1]
+                location = geolocator.reverse(Latitude+","+Longitude)
+                address = location.raw['address']
+                    # traverse the data
+                state = address.get('state', '')
+                country = address.get('country', '')
+                print('state',state)
+                if state == 'California':
+                #location= check_state_california(selected_latitude,selected_longitude)
+                
+                    print(" gg calyyy")
+                    st.session_state.location = 0
+                else:
+                    print("Veuillez selectionner une location en Californie!")
+                    st.session_state.location = 1
+                    st.warning("Veuillez selectionner une location en Californie!")
+
                 if selected_categories == []:
                       
                         st.warning("Veuillez selectionner une categorie(s)!")
@@ -215,7 +248,7 @@ if selected == 'Nouvel utilisateur':
                       st.session_state.selected_categories = selected_categories
                       st.success(f"categories choisies: {selected_categories}")
                 print('stored' + str(st.session_state.session_lat) +' '+ str(st.session_state.session_long))
-               
+                print('stored' + str(st.session_state.location))
                
             Predicted2 = st.button('Predict')
             

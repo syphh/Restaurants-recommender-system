@@ -6,8 +6,29 @@ import tensorflow as tf
 from collections import defaultdict, Counter
 from gensim.models import Word2Vec
 import folium
-import os
+from geopy.geocoders import Nominatim
+ 
 #""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+
+def check_state_california(Latitude, Longitude):
+    geolocator = Nominatim(user_agent="geoapiExercises")
+ 
+    location = geolocator.reverse(Latitude+","+Longitude)
+    address = location.raw['address']
+    # traverse the data
+    state = address.get('state', '')
+    country = address.get('country', '')
+
+    if state == "California":
+        return True, f"You have selected {location}"
+    else:
+        return False, f"Veuillez entrer une location en Californie, vous avez choisis {location}"
+    
 
 
 def popularity_score(df_resto, m=50):  # m is the number of reviews starting from which the restaurant mean rating becomes more reliable that the global mean rating
@@ -140,8 +161,8 @@ def recommend_to_existing_user(df_resto, df_user, user_id, model_ncf, model_wv, 
     df_resto = df_resto[(df_resto['distance'] <= r)&(df_resto['resto_code'].isin(resto_codes))].copy()
     print(df_resto.shape)
     df_resto['popularity_score'] = popularity_score(df_resto) if weights['popu_rec'] > 0 else 0
-    df_resto['knowledge_score'] = knowledge_score(df_resto, sim_map, user_price, user_lat_norm, user_lng_norm, {'price': 0.1, 'location': 0.4, 'category': 0.5}) if weights['knowledge_rec'] > 0 else 0
-    df_resto['content_score'] = content_based_score(df_resto, sim_map, user_price, user_lat_norm, user_lng_norm, {'price': 0.3, 'category': 0.6, 'location': 0.1}) if weights['content_rec'] > 0 else 0
+    df_resto['knowledge_score'] = knowledge_score(df_resto, sim_map, user_price, user_lat_norm, user_lng_norm, {'price': 0.2, 'location': 0.3, 'category': 0.5}) if weights['knowledge_rec'] > 0 else 0
+    df_resto['content_score'] = content_based_score(df_resto, sim_map, user_price, user_lat_norm, user_lng_norm, {'price': 0.2, 'category': 0.5, 'location': 0.5}) if weights['content_rec'] > 0 else 0
     df_resto['collab_score'] = collab_score(df_resto, user_code, model_ncf) if weights['collab_rec'] > 0 else 0
     df_resto['score'] = df_resto['popularity_score']*weights['popu_rec'] + df_resto['knowledge_score']*weights['knowledge_rec'] + df_resto['content_score']*weights['content_rec'] + df_resto['collab_score']*weights['collab_rec']
     df_history_cats = pd.DataFrame.from_dict(fav_cats, orient='index', columns=['taux d\'occurences'])
@@ -149,9 +170,9 @@ def recommend_to_existing_user(df_resto, df_user, user_id, model_ncf, model_wv, 
 
 @st.cache_data
 def load_data(path):
-            folder = os.path.dirname(os.path.dirname(os.getcwd()))
-            df_resto = pd.read_csv(folder + 'data/restaurants.csv')
-            df_users = pd.read_csv(folder + 'data/users.csv')
+            folder = path
+            df_resto = pd.read_csv(folder + 'restaurants.csv')
+            df_users = pd.read_csv(folder + 'users.csv')
            
        
             df_resto = preprocess_df_resto(df_resto)
@@ -159,12 +180,12 @@ def load_data(path):
             return df_resto, df_users
 @st.cache_resource
 def load_ncfmodel():
-            model =tf.keras.models.load_model('../models/ncf_model.h5')
+            model =tf.keras.models.load_model('./models/ncf_model.h5')
             return model
 
 @st.cache_resource 
 def load_word2vecmodel():
-            model = Word2Vec.load('../models/word2vec.model')
+            model = Word2Vec.load('./models/word2vec.model')
             return model
 
 def show_results(prediction_score, i,expanded = False):
